@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">DataCipherDemo</string>
+
+    <string name="cipher_prompt">Select A Cipher Algorithm</string>
+    <string name="send">SEND</string>
+
+</resources>
