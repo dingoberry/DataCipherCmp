@@ -1,8 +1,8 @@
-package demo.cipher.tf.com.datacipherdemo
+package demo.cipher.tf.com.datacipherdemo.utils
 
 import android.util.Log
 
-object Logger {
+internal object Logger {
 
     private val TAG : String = "yymm"
 

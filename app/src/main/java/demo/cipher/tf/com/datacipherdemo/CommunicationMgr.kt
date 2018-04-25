@@ -7,10 +7,8 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
 import android.os.Message
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
+import demo.cipher.tf.com.datacipherdemo.utils.Logger
+import java.io.*
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -34,9 +32,11 @@ object CommunicationMgr {
             return;
         }
 
-        val ins = s.inputStream;
+        val ins = DataInputStream(s.inputStream)
         while (true) {
-            val buffer = ByteArray(ins.read())
+            val size = ins.readInt()
+            val buffer = ByteArray(size)
+            Logger.i("Read Size=" + buffer.size)
             if (-1 == ins.read(buffer)) {
                 break
             }
@@ -64,11 +64,12 @@ object CommunicationMgr {
             ojs.flush()
 
             val buffer = bos.toByteArray()
-            val cos = mClientSocket?.outputStream;
-            cos?.write(buffer.size)
-            cos?.flush()
-            cos?.write(buffer)
-            cos?.flush()
+            val cos = DataOutputStream(mClientSocket?.outputStream)
+            cos.writeInt(buffer.size)
+            Logger.i("Write Size=" + buffer.size)
+            cos.flush()
+            cos.write(buffer)
+            cos.flush()
         }
         Logger.i("sendImpl=" + tk)
         return true

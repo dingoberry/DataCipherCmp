@@ -9,11 +9,13 @@ class TalkObject : Serializable {
 
     var msg: String? = null;
     var deco: String? = null;
+    var tag: String? = null;
 
     constructor()
 
-    constructor(m : String?, d : String?) {
+    constructor(m : String?, d : String?, t : String?) {
         msg = m
         deco = d
+        tag = t
     }
 }

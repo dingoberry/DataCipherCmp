@@ -7,22 +7,21 @@ import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import java.security.KeyPair
-import java.security.KeyPairGenerator
-import javax.crypto.Cipher
+import android.widget.Toast
+import demo.cipher.tf.com.datacipherdemo.algorithm.Interpreter
+import demo.cipher.tf.com.datacipherdemo.utils.Logger
 
 class ClientFragment : Fragment(), View.OnClickListener {
 
     private var mSelector: TextView? = null
     private var mData: TextView? = null
-    private var mPair: KeyPair? = null
+    private var mInter: Interpreter? = null;
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -52,17 +51,19 @@ class ClientFragment : Fragment(), View.OnClickListener {
         if (TextUtils.isEmpty(value)) {
             return
         }
+        mData?.text = mInter?.translateToSecret(s.toString())
 
-        val c = Cipher.getInstance("RSA/ECB/PKCS1Padding")
-        c.init(Cipher.ENCRYPT_MODE, mPair?.private)
-        val b = c.doFinal(s.toString().toByteArray())
-        mData?.text = Base64.encodeToString(b, Base64.DEFAULT)
+
+        Logger.i(mInter?.algorithm?.getFormatEncode() ?: "EMPTY")
     }
 
     private fun process(dialog: DialogInterface, which: Int) {
-        dialog.dismiss();
-        mSelector!!.text = Config.CIPHER_LIST[which];
-        mPair = KeyPairGenerator.getInstance("RSA").genKeyPair()
+        dialog.dismiss()
+        val al = Config.CIPHER_LIST[which]
+        mSelector!!.text = al
+        val it = Interpreter.Factory.loadRefInterpreter(al)
+        it!!.genAlgorithm()
+        mInter = it
     }
 
     override fun onClick(v: View?) {
@@ -73,7 +74,8 @@ class ClientFragment : Fragment(), View.OnClickListener {
                 builder.create().show();
             }
             R.id.client_send -> {
-                CommunicationMgr.send(TalkObject("123", "23"))
+                CommunicationMgr.send(TalkObject(mData?.text.toString(), mInter?.algorithm?.getFormatDecode(), mSelector?.text.toString()))
+                Toast.makeText(context, "Already Sent", Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -1,10 +1,11 @@
 package demo.cipher.tf.com.datacipherdemo;
 
-import android.os.Handler;
+public class Config {
 
-class Config {
+    public static final String RSA = "RSA";
+//    public static final String DSA = "DSA";
+    public static final String EC = "EC";
+    public static final String BC = "BC";
 
-    static final String RSA = "RSA";
-
-    static final String[] CIPHER_LIST = {RSA};
+    public static final String[] CIPHER_LIST = {RSA, EC};
 }
